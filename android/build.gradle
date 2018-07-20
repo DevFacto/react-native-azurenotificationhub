@@ -1,12 +1,22 @@
 apply plugin: 'com.android.library'
 
+buildscript {
+    repositories {
+        jcenter()
+        google()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.+'
+        classpath 'com.google.gms:google-services:3.+'
+    }
+}
+
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    compileSdkVersion 26
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 23
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         ndk {
@@ -21,18 +31,27 @@ android {
     }
 }
 
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.facebook.react:react-native:+'
-    compile 'com.google.android.gms:play-services-gcm:9.4.0'
-    compile 'com.google.firebase:firebase-messaging:9.4.0'
-    compile 'com.microsoft.azure:notification-hubs-android-sdk:0.4@aar'
-    compile 'com.microsoft.azure:azure-notifications-handler:1.0.1@aar'
+allprojects {
+    repositories {
+        google()
+        mavenLocal()
+        jcenter()
+        maven {
+            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+            url "$rootDir/../node_modules/react-native/android"
+        }
+        maven { url "https://jitpack.io" }
+        maven { url "https://maven.google.com" }
+    }
 }
 
-repositories {
-    maven {
-        url "http://dl.bintray.com/microsoftazuremobile/SDK"
-    }
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.facebook.react:react-native:+'
+    implementation 'com.google.android.gms:play-services-gcm:10.2.1'
+    implementation 'com.google.firebase:firebase-messaging:10.2.1'
+    implementation 'com.microsoft.azure:notification-hubs-android-sdk:0.4@aar'
+    implementation 'com.microsoft.azure:azure-notifications-handler:1.0.1@aar'
+    implementation 'com.android.support:support-compat:26.1.0'
 }
 
