@@ -102,7 +102,12 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
                 title = context.getPackageManager().getApplicationLabel(appInfo).toString();
             }
 
-            NotificationCompat.Builder notification = new NotificationCompat.Builder(context)
+            String channelId = bundle.getString("channelId");
+            if (channelId == null) {
+                channelId = title;
+            }
+
+            NotificationCompat.Builder notification = new NotificationCompat.Builder(context, channelId)
                     .setContentTitle(title)
                     .setTicker(bundle.getString("ticker"))
                     .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
