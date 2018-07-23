@@ -3,6 +3,7 @@ package com.azure.reactnative.notificationhub;
 import android.app.AlarmManager;
 import android.app.Application;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -34,6 +35,9 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
     public static final String TAG = "ReactNativeNotificationsHandler";
 
     private static final long DEFAULT_VIBRATION = 300L;
+
+    private static final String DEFAULT_CHANNEL_ID = "NOTIFICATION_DEFAULT_CHANNEL";
+    private static final String DEFAULT_CHANNEL_DESCRIPTION = "Default Notification Channel";
 
     private Context context;
 
@@ -102,10 +106,7 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
                 title = context.getPackageManager().getApplicationLabel(appInfo).toString();
             }
 
-            String channelId = bundle.getString("channelId");
-            if (channelId == null) {
-                channelId = title;
-            }
+            String channelId = DEFAULT_CHANNEL_ID;
 
             NotificationCompat.Builder notification = new NotificationCompat.Builder(context, channelId)
                     .setContentTitle(title)
@@ -261,6 +262,18 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
                     PendingIntent pendingActionIntent = PendingIntent.getBroadcast(context, notificationID, actionIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT);
                     notification.addAction(icon, action, pendingActionIntent);
+                }
+            }
+
+            // Since android Oreo notification channel is needed.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel notificationChannel = notificationManager.getNotificationChannel(channelId);
+                if (notificationChannel == null) {
+                    int importance = NotificationManager.IMPORTANCE_HIGH;
+                    notificationChannel = new NotificationChannel(channelId, DEFAULT_CHANNEL_DESCRIPTION, importance);
+                    notificationChannel.setLightColor(Color.GREEN);
+                    notificationChannel.enableVibration(true);
+                    notificationManager.createNotificationChannel(notificationChannel);
                 }
             }
 
